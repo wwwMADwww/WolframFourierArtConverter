@@ -8,7 +8,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using WolframFourierArtParser;
 
-namespace WfaParser;
+namespace WolframFourierArtConverter;
 
 public static class ConvertCommand
 {

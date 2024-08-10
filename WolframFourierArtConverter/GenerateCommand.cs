@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using WolframFourierArtParser;
 
-namespace WfaParser;
+namespace WolframFourierArtConverter;
 
 public static class GenerateCommand
 {
