@@ -14,7 +14,7 @@ Example input files in `Formulas` dir.
 
 Or use `WolframFourierArtParser` project in your code.
 
-## Arguments
+### Arguments
 
 `WolframFourierArtConverter convert formulaInputFilename [outputFilename]`
 
