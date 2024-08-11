@@ -14,7 +14,12 @@ public class FourierSeries
     public double IntervalEnd { get; init; }
 
     public Harmonic[] HarmonicsX { get; init; }
+
+    public double ConstX { get; init; }
+
     public Harmonic[] HarmonicsY { get; init; }
+
+    public double ConstY { get; init; }
 }
 
 public class Harmonic

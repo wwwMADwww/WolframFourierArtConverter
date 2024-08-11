@@ -51,17 +51,15 @@ public static class GenerateCommand
         Console.WriteLine("Generated");
     }
 
-    public static Vector2[] GenerateCoords(FourierSeries[] fourierSeries, double step)
+    public static Vector2d[] GenerateCoords(FourierSeries[] fourierSeries, double step)
     {
-        var list = new List<Vector2>((int) (1.0f / step));
+        var list = new List<Vector2d>((int) (1.0f / step));
 
         var funcs = fourierSeries.Select(s => new FourierFunc(s)).ToArray();
 
-        step = step * funcs.Length;
-
         foreach (var func in funcs)
         {
-            for (double t = 0.0; t < 1.0; t += step)
+            for (double t = 0.0; t <= 1.0; t += step)
             {
                 var v = func.Calculate(t);
 
@@ -73,30 +71,5 @@ public static class GenerateCommand
 
         return list.ToArray();
     }
-
-    // public Vector2[] GenerateEquidistant(FourierSeries[] fourierSeries, double step)
-    // {
-    //     // This require ManuPath library
-    //
-    //     var list = new List<Vector2>();
-    // 
-    //     var funcs = fourierSeries.Select(s => new FourierFunc(s)).ToArray();
-    // 
-    //     step = step * funcs.Length;
-    // 
-    //     foreach (var func in funcs)
-    //     {
-    //         var dots = ManuPath.Maths.CommonMath.CurveToEquidistantDots(0, 1, 120f, 130f, (float)step, null, t => func.Calculate(t));
-    // 
-    //         foreach(var v in dots)
-    //         {
-    //             if (double.IsNaN(v.X) || double.IsNaN(v.Y)) continue;
-    // 
-    //             list.Add(v);
-    //         }
-    //     }
-    // 
-    //     return list.ToArray();
-    // }
 
 }

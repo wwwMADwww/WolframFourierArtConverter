@@ -36,24 +36,28 @@ public partial class FourierSeriesParser
             .Zip(ySeries)
             .Select(h => new FourierSeries()
             { 
-                IntervalStart = h.First.minT,
-                IntervalEnd = h.First.maxT,
+                IntervalStart = h.First.minT * Math.PI,
+                IntervalEnd = h.First.maxT * Math.PI,
+
                 HarmonicsX = h.First.harmonics,
+                ConstX = h.First.constant,
+
                 HarmonicsY = h.Second.harmonics,
+                ConstY = h.Second.constant,
             })
             .ToArray();
 
         return series;
     }
 
-    private (Harmonic[] harmonics, double minT, double maxT)[] ConvertToSeries(string formula)
+    private (Harmonic[] harmonics, double constant, double minT, double maxT)[] ConvertToSeries(string formula)
     {
-        var funcs = new List<(Harmonic[], double, double)>();
+        var funcs = new List<(Harmonic[], double, double, double)>();
 
         if (!formula.Contains('θ'))
         {
-            var harmonics = ConvertToHarmonics(formula);
-            funcs.Add((harmonics, 0, 2));
+            var (harmonics, constant) = ConvertToHarmonics(formula);
+            funcs.Add((harmonics, constant, 0, 2));
         }
         else
         {
@@ -75,9 +79,9 @@ public partial class FourierSeriesParser
 
                 prevPos = match.Index + match.Length;
 
-                var harmonics = ConvertToHarmonics(seriesStr);
+                var (harmonics, constant) = ConvertToHarmonics(seriesStr);
 
-                funcs.Add((harmonics, minT, maxT));
+                funcs.Add((harmonics, constant, minT, maxT));
             }
 
         }
@@ -86,7 +90,7 @@ public partial class FourierSeriesParser
     }
 
 
-    private Harmonic[] ConvertToHarmonics(string str)
+    private (Harmonic[] harmonics, double constant) ConvertToHarmonics(string str)
     { 
         var harmonicMatches = RegexHarmonic().Matches(str);
 
@@ -120,6 +124,8 @@ public partial class FourierSeriesParser
 
         var trail = str[(harmonicMatches[^1].Index + harmonicMatches[^1].Length)..].Replace(")", "").Trim();
 
+        var constant = 0.0;
+
         if (trail.Length > 0)
         {
             var trailSign = trail[0] == '-' ? -1.0 : 1.0;
@@ -127,16 +133,10 @@ public partial class FourierSeriesParser
             var trailAmpStr = trail[2..];
             var trailAmp = CalcFraction(trailAmpStr);
 
-            var trailHarmonic = new Harmonic()
-            {
-                Amp = trailAmp * trailSign,
-                N = 0,
-                Phase = 0,
-            };
-            list.Add(trailHarmonic);
+            constant = trailAmp * trailSign;
         }
 
-        return list.ToArray();  
+        return (list.ToArray(), constant);  
     }
 
     (int n, double phase) GetSinArgComponents(string str)
