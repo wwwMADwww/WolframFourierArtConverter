@@ -122,6 +122,7 @@ public partial class FourierSeriesParser
             list.Add(harmonic);
         }
 
+        var prefix = str[str.IndexOf("(")..harmonicMatches[0].Index].Replace("(", "").Trim();
         var trail = str[(harmonicMatches[^1].Index + harmonicMatches[^1].Length)..].Replace(")", "").Trim();
 
         var constant = 0.0;
@@ -134,6 +135,13 @@ public partial class FourierSeriesParser
             var trailAmp = CalcFraction(trailAmpStr);
 
             constant = trailAmp * trailSign;
+        }
+
+        if (prefix.Length > 0)
+        {
+            var prefixAmp = CalcFraction(prefix);
+
+            constant = constant + prefixAmp;
         }
 
         return (list.ToArray(), constant);  
