@@ -12,7 +12,7 @@ public partial class FourierSeriesParser
     [GeneratedRegex(@"(?<thetas>θ\((?<start>\d+) π - t\) ((θ\(t - (?<end>\d+) π\))|(θ\(t \+ π\))))")]
     private static partial Regex RegexThetas();
 
-    [GeneratedRegex(@"(?<harm>(?<sign>[+-] ?)?(?<amp>((\d+\/\d+)|(\d+)) )?(?<sin>sin\((?<sinArg>([\d +-/tπ]+))\)))")]
+    [GeneratedRegex(@"(?<sign>[+-] ?)?((?<harm>(?<amp>((\d+\/\d+)|(\d+)) )?(?<sin>sin\((?<sinArg>([\d +-/tπ]+))\)))|(?<harm>\((?<amp>(\d+) )?(?<sin>sin\((?<sinArg>([\d +-/tπ]+))\))\)/(?<div>\d+)))")]
     private static partial Regex RegexHarmonic();
 
 
@@ -108,13 +108,16 @@ public partial class FourierSeriesParser
 
             var sinArgStr = match.Groups["sinArg"].Value;
 
+            var divisorStr = match.Groups["div"].Value;
+            var divisor = divisorStr.Length == 0 ? 1 : double.Parse(divisorStr);
+
             var (n, phase) = sinArgStr.Length == 0
                 ? (0, double.NaN)
                 : GetSinArgComponents(sinArgStr);
 
             var harmonic = new Harmonic()
             {
-                Amp = amp * sign,
+                Amp = amp / divisor * sign,
                 N = n,
                 Phase = phase,
             };
